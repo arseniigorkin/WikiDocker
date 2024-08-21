@@ -1,0 +1,33 @@
+{
+  "gpbs.ru": {
+    "connection": {
+      "server": "s-001.gpbs.ru",
+      "port": "389",
+      "use-tls": "false",
+      "user": "CN=agent.wiki,OU=IT,DC=gpbs,DC=ru",
+      "pass": "k0WlmE39uD@M",
+      "enctype": "clear",
+      "options": {
+        "LDAP_OPT_DEREF": 1
+      },
+      "basedn": "DC=gpbs,DC=ru",
+      "userbasedn": "OU=IT,DC=gpbs,DC=ru",
+      "groupbasedn": "DC=gpbs,DC=ru",
+      "searchattribute": "samaccountname",
+      "usernameattribute": "samaccountname",
+      "realnameattribute": "cn",
+      "emailattribute": "mail",
+      "grouprequest": "MediaWiki\\Extension\\LDAPProvider\\UserGroupsRequest\\UserMemberOf::factory",
+      "mappedgroups": "MediaWiki\\Extension\\LDAPGroups\\SyncMechanism\\MappedGroups::factory",
+      "presearchusernamemodifiers": [ "spacestounderscores", "lowercase" ]
+    },
+    "userinfo": [],
+    "authorization": [],
+    "groupsync": {
+      "mechanism": "mappedgroups",
+      "mapping": {
+        "developer": "CN=WIKI - Пользователи,OU=Группы доступа,OU=IT,DC=gpbs,DC=ru"
+      }
+    }
+  }
+}
