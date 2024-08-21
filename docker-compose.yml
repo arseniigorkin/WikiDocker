@@ -1,0 +1,40 @@
+services:
+  web:
+    depends_on:
+      - testwikidb
+    image: ubuntu:24.04
+    container_name: mywikibase
+    networks:
+      - wiki_net
+    ports:
+      - "8081:80"
+      - "8082:8080"
+      - "8083:8282"
+    volumes:
+      - /Users/arseniigorkin/Desktop/RS CURRENT/Magistral/Wiki/pdf/Docker/Base/websites/test.wiki:/var/www/test.wiki
+    environment:
+      - NODE_VERSION=18.20.4
+    build:
+      context: .
+      dockerfile: Dockerfile
+    entrypoint: ["/startup.sh"]
+    privileged: true
+  testwikidb:
+    image: mysql:latest
+    container_name: testwikidb
+    networks:
+      - wiki_net
+    ports:
+      - "3303:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root_testwiki123
+      MYSQL_DATABASE: test_wiki
+      MYSQL_USER: test_wiki
+      MYSQL_PASSWORD: 12345testwiki
+    volumes:
+      - /Users/arseniigorkin/Desktop/RS CURRENT/Magistral/Wiki/pdf/Docker/db/test_db/data:/var/lib/mysql
+    # volumes:
+    #   - ./sql/dev.wiki.sql:/docker-entrypoint-initdb.d/dev.wiki.sql
+networks:
+  wiki_net:
+    driver: bridge
