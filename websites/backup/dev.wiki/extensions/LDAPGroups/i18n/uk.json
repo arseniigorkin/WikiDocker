@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Piramidion",
+			"Renamerr"
+		]
+	},
+	"ldapgroups-desc": "Дозволяє синхронізувати групу користувачів з ресурсом LDAP"
+}

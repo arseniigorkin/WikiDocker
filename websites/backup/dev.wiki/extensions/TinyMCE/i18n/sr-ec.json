@@ -1,0 +1,14 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kareyac",
+			"Milicevic01"
+		]
+	},
+	"tinymce-upload-source-label": "Извор",
+	"tinymce-upload-alttext-label": "Алтернативни текст",
+	"tinymce-yes": "Да",
+	"tinymce-no": "Не",
+	"tinymce-ok": "У реду",
+	"tinymce-cancel": "Откажи"
+}

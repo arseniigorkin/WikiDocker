@@ -1,0 +1,9 @@
+{
+	"@metadata": {
+		"authors": [
+			"Matrafox",
+			"NGC 54"
+		]
+	},
+	"ldapgroups-desc": "Permite sincronizarea grupurilor de utilizator cu o resursă LDAP"
+}

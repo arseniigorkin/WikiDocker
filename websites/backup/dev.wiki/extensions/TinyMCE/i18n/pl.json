@@ -1,0 +1,15 @@
+{
+	"@metadata": {
+		"authors": [
+			"Kareyac"
+		]
+	},
+	"tinymce-upload-title-image": "Obraz",
+	"tinymce-upload-source-label": "Źródło",
+	"tinymce-upload-button-label-rename": "Zmień nazwę",
+	"tinymce-link-type-label": "Typ",
+	"tinymce-yes": "Tak",
+	"tinymce-no": "Nie",
+	"tinymce-ok": "OK",
+	"tinymce-cancel": "Anuluj"
+}
