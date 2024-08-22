@@ -1,0 +1,167 @@
+{
+  "name": "VCSystem",
+  "author": [
+    "Arsenii Gorkin gorkin@protonmail.com"
+  ],
+  "version": "0.1.rev.0",
+  "url": "",
+  "descriptionmsg": "vcsystem-desc",
+  "license-name": "GPL-2.0-or-later",
+  "type": "other",
+  "requires": {
+    "MediaWiki": ">= 1.39.0"
+  },
+  "MessagesDirs": {
+    "VCSystem": [
+      "i18n"
+    ]
+  },
+  "config": {
+    "vcsPrefix": {
+      "value": "vcsystem_",
+      "description": "vcsystem-config-prefix-description"
+    }
+  },
+  "SpecialPages": {
+    "VCSystemSettings": {
+      "class": "VCSystem\\SpecialVCSystemSettings"
+    },
+    "VCSystemBranches": {
+      "class": "VCSystem\\SpecialVCSystemBranchManagement"
+    }
+  },
+  "ExtensionMessagesFiles": {
+    "VCSystemAliases": "VCSystem.Aliases.php"
+  },
+  "UserGroupPermissions": {
+    "vcsadmin": {
+      "vcs-merge-versions-permission": true,
+      "vcs-manage-branches-permission": true
+    }
+  },
+  "AddGroups": {
+    "bureaucrat": ["vcsadmin"],
+    "sysop": ["vcsadmin"]
+  },
+  "RemoveGroups": {
+    "bureaucrat": ["vcsadmin"],
+    "sysop": ["vcsadmin"]
+  },
+  "AutoloadClasses": {
+    "VCSystem\\VCSystemMain": "includes/VCSystemMain.php",
+    "VCSystem\\Maintenance\\InitVcsystemMainTableAndMasterBranch": "includes/maintenance/InitVcsystemMainTableAndMasterBranch.php",
+    "VCSystem\\SpecialVCSystemSettings": "includes/SpecialVCSystemSettings.php",
+    "VCSystem\\SpecialVCSystemBranchManagement": "includes/SpecialVCSystemBranchManagement.php",
+    "VCSystem\\hooks\\ParserAfterTidyHook": "includes/hooks/ParserAfterTidyHook.php",
+    "VCSystem\\hooks\\SkinTemplateNavigationHook": "includes/hooks/SkinTemplateNavigationHook.php",
+    "VCSystem\\hooks\\SkinAfterPortletHook": "includes/hooks/SkinAfterPortletHook.php",
+    "VCSystem\\hooks\\PageSaveCompleteHook": "includes/hooks/PageSaveCompleteHook.php",
+    "VCSystem\\hooks\\ArticleViewHeaderHook": "includes/hooks/ArticleViewHeaderHook.php",
+    "VCSystem\\hooks\\MultiContentSaveHook": "includes/hooks/MultiContentSaveHook.php",
+    "VCSystem\\hooks\\FileUploadHook": "includes/hooks/FileUploadHook.php",
+    "VCSystem\\hooks\\UploadVerifyFileHook": "includes/hooks/UploadVerifyFileHook.php",
+    "VCSystem\\hooks\\RecentChange_saveHook": "includes/hooks/RecentChange_saveHook.php",
+    "VCSystem\\api\\ApiCreateBranch": "includes/api/ApiCreateBranch.php",
+    "VCSystem\\api\\ApiGetBranches": "includes/api/ApiGetBranches.php",
+    "VCSystem\\hooks\\LoadExtensionSchemaUpdatesHook": "includes/hooks/LoadExtensionSchemaUpdatesHook.php",
+    "VCSystem\\hooks\\models\\UpdateRevisionForFileOnPageContentChangeModel": "includes/hooks/models/UpdateRevisionForFileOnPageContentChangeModel.php"
+  },
+  "APIModules": {
+    "createbranch": "VCSystem\\api\\ApiCreateBranch",
+    "getbranches": "VCSystem\\api\\ApiGetBranches"
+  },
+  "Hooks": {
+    "UserGetDefaultGroups": "VCSystem\\VCSystemMain::onUserGetDefaultGroups",
+    "MediaWikiServices": "VCSystem\\VCSystemMain::onMediaWikiServices",
+    "BeforePageDisplay": "VCSystem\\VCSystemMain::onBeforePageDisplay",
+    "SkinAfterPortlet": "VCSystem\\hooks\\SkinAfterPortletHook::onSkinAfterPortlet",
+    "ParserAfterTidy": "VCSystem\\hooks\\ParserAfterTidyHook::onParserAfterTidy",
+    "SkinTemplateNavigation::Universal": "VCSystem\\hooks\\SkinTemplateNavigationHook::onSkinTemplateNavigation_Universal",
+    "ArticleViewHeader": "VCSystem\\hooks\\ArticleViewHeaderHook::onArticleViewHeader",
+    "PageSaveComplete": "VCSystem\\hooks\\PageSaveCompleteHook::onPageSaveComplete",
+    "MultiContentSave": "VCSystem\\hooks\\MultiContentSaveHook::onMultiContentSave",
+    "FileUpload": "VCSystem\\hooks\\FileUploadHook::onFileUpload",
+    "UploadVerifyFile": "VCSystem\\hooks\\UploadVerifyFileHook::onUploadVerifyFile",
+    "RecentChange_save": "VCSystem\\hooks\\RecentChange_saveHook::onRecentChange_save",
+    "LoadExtensionSchemaUpdates": "handleLoadExtensionSchemaUpdates"
+  },
+  "HookHandlers": {
+    "handleLoadExtensionSchemaUpdates": {
+      "class": "VCSystem\\hooks\\LoadExtensionSchemaUpdatesHook"
+    }
+  },
+  "ResourceModules": {
+    "ext.VCSystem": {
+      "scripts": [
+        "resources/vcsnewbranch.js",
+        "resources/vcsgetbranches.js",
+        "resources/vcs_system_messages.js",
+        "resources/vcseditswitch.js",
+        "resources/vcsmerger.js"
+      ],
+      "dependencies": [
+        "oojs-ui",
+        "oojs-ui.styles.icons-media"
+      ],
+      "images": {
+        "file_not_found": "resources/images/file-not-found.png"
+      },
+      "localBasePath": "",
+      "messages": [
+        "vcsystem-new-branch-successfully-added",
+        "vcsystem-get-branches-empty-response",
+        "vcsystem-new-branch-required-chars-number",
+        "vcsystem-new-branch-allowed-chars",
+        "vcsystem-new-branch-already-taken-branch-name",
+        "vcsystem-vcsspecialpagesettingsbottom-js-label-in-the-master-text",
+        "vcsystem-merger-js-prompt-undone-action",
+        "vcsystem-branch-management-js-prompt-action",
+        "vcsystem-merger-js-prompt-undon-action"
+      ],
+      "remoteExtPath": "VCSystem"
+    },
+    "ext.VCSystem.switch": {
+      "styles": [
+        "extensions/VCSystem/resources/css/main.css",
+        "extensions/VCSystem/resources/css/switch.css"
+      ],
+      "position": "top"
+    },
+    "ext.VCSystem.vcsspecialpagesettingsbottom": {
+      "scripts": [
+        "extensions/VCSystem/resources/vcsspecialpagesettingsbottom.js"
+      ],
+      "dependencies": [
+        "oojs-ui",
+        "oojs-ui.styles.icons-media",
+        "oojs-ui.styles.icons-content",
+        "oojs-ui.styles.icons-alerts",
+        "oojs-ui.styles.icons-interactions",
+        "oojs-ui.styles.icons-moderation",
+        "oojs-ui.styles.icons-editing-core",
+        "oojs-ui.styles.icons-editing-citation",
+        "oojs-ui.styles.icons-location",
+        "oojs-ui.styles.icons-user",
+        "oojs-ui.styles.icons-accessibility",
+        "oojs-ui.styles.indicators"
+
+      ],
+      "position": "bottom"
+    },
+    "ext.VCSystem.vcsbranchmanagement": {
+      "scripts": [
+        "extensions/VCSystem/resources/vcsbranchmanagement.js"
+      ],
+      "position": "bottom"
+    }
+  },
+  "ResourceFileModulePaths": {
+    "remoteExtPath": "VCSystem"
+  },
+  "SchemaUpdates": {
+    "mysql": [
+      "sql/vcsystem_main.sql"
+    ]
+  },
+  "manifest_version": 2
+}

@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Nokeoo"
+		]
+	},
+	"ldapgroups-desc": "Leidžia naudotojų grupės sinchronizaciją su LDAP ištekliumi"
+}
