@@ -95,9 +95,6 @@ RUN apt-get update && apt-get install -y software-properties-common && \
 COPY ${DISTROS} /var/www/distros
 RUN chmod g+rxw -R /var/www/distros
 RUN chown -R ${WIKI_USER_NAME} /var/www
-USER ${WIKI_USER_NAME}
-RUN cd /var/www/distros/mediawiki-services-chromium-render && npm install
-USER root
 
 # 15. Очистка и завершение
 RUN apt clean && apt update && \
