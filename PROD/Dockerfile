@@ -11,7 +11,7 @@ LABEL maintainer="Arsenii Gorkin <gorkin@protonmail.com>"
 # 2. Задаём аргументы
 ARG NODE_VERSION='18.20.4'
 ARG APACHE_WIKI_CONF='./apache2/wiki.conf'
-ARG APACHE_DEV_WIKI_CONF='./apache2/dev_wiki.conf'
+ARG APACHE_DEV_WIKI_CONF='./apache2/dev.wiki.conf'
 ARG STARTUP_SCRIPT='./scripts/startup.sh'
 ARG DISTROS='./distros'
 ARG WIKI_USER_NAME='wikiadmin'
