@@ -77,9 +77,9 @@ services:
       - "3304:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${DEV_WIKI_MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${WIKI_MYSQL_DATABASE}
-      MYSQL_USER: ${WIKI_MYSQL_USER}
-      MYSQL_PASSWORD: ${WIKI_MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${DEV_WIKI_MYSQL_DATABASE}
+      MYSQL_USER: ${DEV_WIKI_MYSQL_USER}
+      MYSQL_PASSWORD: ${DEV_WIKI_MYSQL_PASSWORD}
     volumes:
       - ${DEV_WIKI_DATA_PATH}:/var/lib/mysql
       - ${DEV_WIKI_INIT_SQL}:/docker-entrypoint-initdb.d/dev.wiki.sql
