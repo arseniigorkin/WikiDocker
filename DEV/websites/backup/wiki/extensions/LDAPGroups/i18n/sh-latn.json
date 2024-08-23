@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Winston Sung"
+		]
+	},
+	"ldapgroups-desc": "Omogućuje sinkronizaciju korisničkih grupa s LDAP resursom"
+}

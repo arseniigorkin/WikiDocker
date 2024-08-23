@@ -1,0 +1,71 @@
+{
+	"name": "mediawiki/ldap-provider",
+	"extra": {
+		"installer-name": "LDAPProvider"
+	},
+	"license": "GPL-2.0+",
+	"type": "mediawiki-extension",
+	"homepage": "https://www.mediawiki.org/wiki/Extension:LDAPProvider",
+	"description": "Provides a mechanism for MediaWiki to retrieve information using the LDAP protocol",
+	"keywords": [
+		"extension",
+		"wiki",
+		"mediawiki",
+		"ldap"
+	],
+	"authors": [
+		{
+			"name": "Robert Vogel",
+			"email": "vogel@hallowelt.com",
+			"role": "Developer"
+		},
+		{
+			"name": "Mark A. Hershberger",
+			"email": "mah@nichework.com",
+			"role": "Contributor"
+		},
+		{
+			"name": "Cindy Cicalese",
+			"email": "cindom@gmail.com",
+			"role": "Contributor"
+		}
+	],
+	"require": {
+		"composer/installers": "~1.0|~2"
+	},
+	"require-dev": {
+		"mediawiki/mediawiki-codesniffer": "39.0.0",
+		"mediawiki/mediawiki-phan-config": "0.11.1",
+		"mediawiki/minus-x": "1.1.1",
+		"php-parallel-lint/php-console-highlighter": "1.0.0",
+		"php-parallel-lint/php-parallel-lint": "1.3.2",
+		"vimeo/psalm": "^4.7"
+	},
+	"scripts": {
+		"test": [
+			"parallel-lint . --exclude vendor --exclude node_modules",
+			"minus-x check .",
+			"@phpcs"
+		],
+		"fix": [
+			"minus-x fix .",
+			"phpcbf"
+		],
+		"lint": [
+			"phpcs -p -s --report=emacs || :",
+			"phan --no-progress-bar -m text | sed 's, ,:,'",
+			"psalm --output-format=emacs --show-info=true"
+		],
+		"fixlint": [
+			"phpcf",
+			"psalter"
+		],
+		"phan": "phan -d . --long-progress-bar",
+		"phpcs": "phpcs -sp"
+	},
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true
+		}
+	}
+}

@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fb97b606-54e4-4e22-a414-e878cbfc23bb" name="Changes" comment="init4" />
+    <list default="true" id="fb97b606-54e4-4e22-a414-e878cbfc23bb" name="Changes" comment="init4">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/websites/distros/mediawiki-services-chromium-render/config.dev.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/websites/distros/mediawiki-services-chromium-render/config.dev.yaml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -59,6 +62,9 @@
       <workItem from="1724265767149" duration="147000" />
       <workItem from="1724266044748" duration="887000" />
       <workItem from="1724266952656" duration="2588000" />
+      <workItem from="1724358525185" duration="61000" />
+      <workItem from="1724360173008" duration="13000" />
+      <workItem from="1724435302641" duration="4000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />

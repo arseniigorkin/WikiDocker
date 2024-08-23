@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"McDutchie"
+		]
+	},
+	"ldapgroups-desc": "Permitte le synchronisation de gruppos de usatores con un ressource LDAP"
+}

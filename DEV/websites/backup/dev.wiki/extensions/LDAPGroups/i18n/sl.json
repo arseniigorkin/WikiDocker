@@ -1,0 +1,8 @@
+{
+	"@metadata": {
+		"authors": [
+			"Eleassar"
+		]
+	},
+	"ldapgroups-desc": "Omogoča sinhronizacijo uporabniških skupin z virom LDAP"
+}

@@ -1,0 +1,86 @@
+#########################################################
+#########################################################
+### Docker Compose для запуска сайтов с документацией ###
+#########################################################
+#########################################################
+
+services:
+  web:
+    depends_on:
+      - dev.wiki.db
+      - wiki.db
+    image: ubuntu:24.04
+    container_name: wikibase
+    networks:
+      - wiki_net
+    ports:
+      - "8081:80"
+#      - "3030:3030"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        USER_WIKI_UPLDS_DIR: ${USER_WIKI_UPLDS_DIR}
+        USER_DEV_WIKI_UPLDS_DIR: ${USER_DEV_WIKI_UPLDS_DIR}
+        DISTROS: ${DISTROS}
+        PRIVATE_WIKI: ${PRIVATE_WIKI}
+        PRIVATE_DEV_WIKI: ${PRIVATE_DEV_WIKI}
+        WIKI_BASE: ${WIKI_BASE}
+        DEV_WIKI_BASE: ${DEV_WIKI_BASE}
+        NODE_VERSION: ${NODE_VERSION}
+        WIKI_SITE_URL: ${WIKI_SITE_URL}
+        DEV_WIKI_SITE_URL: ${DEV_WIKI_SITE_URL}
+        WIKI_USER_NAME: ${WIKI_USER_NAME}
+        WIKI_USER_PWD: ${WIKI_USER_PWD}
+        WIKI_SITE_PROTOCOL: ${WIKI_SITE_PROTOCOL}
+        DEV_WIKI_SITE_PROTOCOL: ${DEV_WIKI_SITE_PROTOCOL}
+    environment:
+    - WIKI_SITE_URL=${WIKI_SITE_URL}
+    - WIKI_SITE_PROTOCOL=${WIKI_SITE_PROTOCOL}
+    - DEV_WIKI_SITE_URL=${DEV_WIKI_SITE_URL}
+    - DEV_WIKI_SITE_PROTOCOL=${DEV_WIKI_SITE_PROTOCOL}
+    entrypoint: ["/startup.sh"]
+    command: ["--prod"]
+    volumes:
+    - ${WIKI_BASE}:/var/www/wiki
+    - ${DEV_WIKI_BASE}:/var/www/dev.wiki
+    - ${PRIVATE_WIKI}:/var/www/private.wiki
+    - ${PRIVATE_DEV_WIKI}:/var/www/private.dev.wiki
+    - ${DISTROS}:/var/www/distros
+    - ${USER_WIKI_UPLDS_DIR}:/var/www/wiki/uploads
+    - ${USER_DEV_WIKI_UPLDS_DIR}:/var/www/dev.wiki/uploads
+
+  wiki.db:
+    image: mysql:latest
+    container_name: wiki.db
+    networks:
+      - wiki_net
+    ports:
+      - "3303:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${WIKI_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${WIKI_MYSQL_DATABASE}
+      MYSQL_USER: ${WIKI_MYSQL_USER}
+      MYSQL_PASSWORD: ${WIKI_MYSQL_PASSWORD}
+    volumes:
+      - ${WIKI_DATA_PATH}:/var/lib/mysql
+      - ${WIKI_INIT_SQL}:/docker-entrypoint-initdb.d/wiki.sql
+
+  dev.wiki.db:
+    image: mysql:latest
+    container_name: dev.wiki.db
+    networks:
+      - wiki_net
+    ports:
+      - "3304:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DEV_WIKI_MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${WIKI_MYSQL_DATABASE}
+      MYSQL_USER: ${WIKI_MYSQL_USER}
+      MYSQL_PASSWORD: ${WIKI_MYSQL_PASSWORD}
+    volumes:
+      - ${DEV_WIKI_DATA_PATH}:/var/lib/mysql
+      - ${DEV_WIKI_INIT_SQL}:/docker-entrypoint-initdb.d/dev.wiki.sql
+networks:
+  wiki_net:
+    driver: bridge
