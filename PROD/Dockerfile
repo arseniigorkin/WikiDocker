@@ -54,7 +54,9 @@ RUN mkdir -p /var/www/wiki  \
     /var/www/test.wiki  \
     /var/www/distros  \
     /var/www/wiki/uploads \
-    /var/www/dev.wiki/uploads && \
+    /var/www/dev.wiki/uploads \
+    /var/www/wiki/logs \
+    /var/www/dev.wiki/logs && \
     chmod g+rxw -R /var/www && \
     chown -R www-data:www-data /var/www
 

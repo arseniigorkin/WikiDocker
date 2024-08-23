@@ -15,7 +15,7 @@ services:
       - wiki_net
     ports:
       - "8081:80"
-#      - "3030:3030"
+    #      - "3030:3030"
     build:
       context: .
       dockerfile: Dockerfile
@@ -36,21 +36,25 @@ services:
         WIKI_USER_PWD: ${WIKI_USER_PWD}
         WIKI_SITE_PROTOCOL: ${WIKI_SITE_PROTOCOL}
         DEV_WIKI_SITE_PROTOCOL: ${DEV_WIKI_SITE_PROTOCOL}
+        USER_WIKI_LOGS_DIR: ${USER_WIKI_LOGS_DIR}
+        USER_DEV_WIKI_LOGS_DIR: ${USER_DEV_WIKI_LOGS_DIR}
     environment:
-    - WIKI_SITE_URL=${WIKI_SITE_URL}
-    - WIKI_SITE_PROTOCOL=${WIKI_SITE_PROTOCOL}
-    - DEV_WIKI_SITE_URL=${DEV_WIKI_SITE_URL}
-    - DEV_WIKI_SITE_PROTOCOL=${DEV_WIKI_SITE_PROTOCOL}
+      - WIKI_SITE_URL=${WIKI_SITE_URL}
+      - WIKI_SITE_PROTOCOL=${WIKI_SITE_PROTOCOL}
+      - DEV_WIKI_SITE_URL=${DEV_WIKI_SITE_URL}
+      - DEV_WIKI_SITE_PROTOCOL=${DEV_WIKI_SITE_PROTOCOL}
     entrypoint: ["/startup.sh"]
     command: ["--prod"]
     volumes:
-    - ${WIKI_BASE}:/var/www/wiki
-    - ${DEV_WIKI_BASE}:/var/www/dev.wiki
-    - ${PRIVATE_WIKI}:/var/www/private.wiki
-    - ${PRIVATE_DEV_WIKI}:/var/www/private.dev.wiki
-    - ${DISTROS}:/var/www/distros
-    - ${USER_WIKI_UPLDS_DIR}:/var/www/wiki/uploads
-    - ${USER_DEV_WIKI_UPLDS_DIR}:/var/www/dev.wiki/uploads
+      - ${WIKI_BASE}:/var/www/wiki
+      - ${DEV_WIKI_BASE}:/var/www/dev.wiki
+      - ${PRIVATE_WIKI}:/var/www/private.wiki
+      - ${PRIVATE_DEV_WIKI}:/var/www/private.dev.wiki
+      - ${DISTROS}:/var/www/distros
+      - ${USER_WIKI_UPLDS_DIR}:/var/www/wiki/uploads
+      - ${USER_DEV_WIKI_UPLDS_DIR}:/var/www/dev.wiki/uploads
+      - ${USER_WIKI_LOGS_DIR}:/var/www/wiki/logs
+      - ${USER_DEV_WIKI_LOGS_DIR}:/var/www/dev.wiki/logs
 
   wiki.db:
     image: mysql:latest
