@@ -1,19 +1,107 @@
 <?php
+////////////////////////////////////
+/// Обязательно установить: sudo apt-get install php-curl
+////////////////////////////////////
+/// Эта версия настроена на работу в сочетании с расширением VCSystem для MediaWiki
+/// Arsenii Gorkin
+/// gorkin@protonmail.com
+/// ////////////////////////////////
+
+
 // Проверяем входные данные
-if (!$_GET["url"]) {
+//if (!$_GET["url"]) {
+if (!$_GET["mw-filename"]) {
     header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
     echo "Параметры не были переданы";
     exit;
 }
-else if (!preg_match('/[\w-]+\.bpmn$/', $_GET["url"])){
+//else if (!preg_match('/[\w-]+\.bpmn$/', $_GET["url"])){
+else if (!preg_match('/[\w-]+\.bpmn$/', $_GET["mw-filename"])){
     header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
 //    echo "Wrong path has been given";
-    echo "Указан неверный путь к BPMN диаграмме";
+    echo "Указан неверный путь к BPMN диаграмме: ". $_GET["mw-filename"];
     exit;
 }
 
 // Отсекаем всё начало пути к файлу (если имеется абс. путь)
-$url = preg_replace('/(^\w+\:\/\/[^\/]+\/)(uploads\/\w+\/\w+\/.+\.bpmn)$/', '$2', $_GET["url"]);
+//$url = preg_replace('/(^\w+\:\/\/[^\/]+\/)(uploads\/\w+\/\w+\/.+\.bpmn)$/', '$2', $_GET["url"]);
+
+$mw_filename = $_GET["mw-filename"];
+
+//$baseURL = 'http://139.59.191.178/index.php?File:';
+// $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+$protocol = 'https';
+$hostname = $_SERVER['HTTP_HOST'];
+$baseURL = $protocol . "://" . $hostname . "/index.php/File:";
+$vcsBranchFromCookies = $_COOKIE['brnch'] ?? 'Master';
+$mwSessionCookies = $_COOKIE['gpidru_wiki_wiki_session'];
+//$mwUserSessionCookies = $_COOKIE['gpidru_wiki_wikimwuser-sessionId'];
+$mwUserIDCookies = $_COOKIE['gpidru_wiki_wikiUserID'];
+
+if(!$mwSessionCookies || !$mwUserIDCookies){
+    header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+    echo "Необходимо пройти авторизацию в данной Wiki";
+    exit;
+}
+
+if (!preg_match('/^[\w-]{3,10}$/i', $vcsBranchFromCookies)) {
+    header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+    echo "Неверный формат ветки VCSystem";
+    exit;
+}
+
+// Забираем файл в переменную
+//$bpmnXML = file_get_contents('/var/www/html/'.$url);
+$ch = curl_init($baseURL.$mw_filename);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // для следования редиректам
+curl_setopt($ch, CURLOPT_HEADER, true);  // для получения заголовков
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    "Cookie: vcs_isEditMode=0; vcs_brnch=$vcsBranchFromCookies; gpidru_wiki_wiki_session=$mwSessionCookies; gpidru_wiki_wikiUserID=$mwUserIDCookies"
+));
+$content = curl_exec($ch);
+$http_status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+// Разделяем заголовки и тело ответа
+$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+$headers_raw = substr($content, 0, $header_size);
+$body = substr($content, $header_size);
+
+curl_close($ch);
+
+$headers = explode("\r\n", $headers_raw);  // Разделяем заголовки по строкам
+
+$cvs_isBranchOk = null;
+foreach ($headers as $header) {
+    if (strpos($header, 'cvs_isBranchOk:') !== false) {
+        $cvs_isBranchOk = trim(str_replace('cvs_isBranchOk:', '', $header));
+        break;
+    }
+}
+
+// Обрабатываем только, если ветки нет
+if ($cvs_isBranchOk && $cvs_isBranchOk == 'no') {
+
+    header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+    echo "Неверная ветка VCSystem.";
+    exit;
+}
+
+if ($http_status == 200 && $body !== false) {
+    $xml = simplexml_load_string($body);
+    if ($xml === false) {
+        header($_SERVER["SERVER_PROTOCOL"] . " 400 Bad Request");
+        echo "Содержимое не является корректным BPMN-XML. Возможно, Вы не авторизовались в Wiki-системе.";
+        exit;
+    }
+    $bpmnXML = $body;
+}
+else {
+    header($_SERVER["SERVER_PROTOCOL"]." 400 Bad Request");
+    echo "Ошибка при получении данных BPMN диаграммы";
+    exit;
+}
 
 // Функция для удаления групп
 function groupDelete(&$groupXML, &$bpmnXML, &$groupsCatBlock, &$allGroupsStr = "") {
@@ -43,8 +131,7 @@ function groupDelete(&$groupXML, &$bpmnXML, &$groupsCatBlock, &$allGroupsStr = "
     return 1;
 }
 
-// Забираем файл в переменную
-$bpmnXML = file_get_contents('/home/gpidru/web/dev.wiki.gpid.ru/public_html/'.$url);
+//$bpmnXML = file_get_contents($baseURL.$url.);
 
 //header('Content-Type: application/xml; charset=utf-8');
 
@@ -326,20 +413,20 @@ if ($_GET["pid"] and preg_match('/^[\w\.\-]+$/', $_GET["pid"])) {
 
 
         // Удаляем ссылки на группы, которые не существуют внутри данного процесса и его подпроцессов
-            foreach ($groupsIDs as &$thisGroupID){
+        foreach ($groupsIDs as &$thisGroupID){
 
-                // Если точно такая же группа есть внутри подпроцесса данного процесса - удаляем её из корня процесса (дубликат)
-                if (preg_match('/([\n ]*\<bpmn:group *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *id=\"'.$thisGroupID.'\" *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *\/?\>[\n ]*)/', $subprocess)){
-                    $allGroupsStr = preg_replace('/([\n ]*\<bpmn:group *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *id=\"'.$thisGroupID.'\" *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *\/?\>[\n ]*)/', '', $allGroupsStr);
-                    continue;
-                }
-                // Иначе, если НЕТ ни в одной из диаграмм - удаляем
-                else if (!preg_match('/bpmnElement\=\"'.$thisGroupID.'\"/', $spDiagramOutput.$innerSPDiagrams)){
-                    $allGroupsStr = preg_replace('/([\n ]*\<bpmn:group *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *id=\"'.$thisGroupID.'\" *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *\/?\>[\n ]*)/', '', $allGroupsStr);
-                }
+            // Если точно такая же группа есть внутри подпроцесса данного процесса - удаляем её из корня процесса (дубликат)
+            if (preg_match('/([\n ]*\<bpmn:group *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *id=\"'.$thisGroupID.'\" *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *\/?\>[\n ]*)/', $subprocess)){
+                $allGroupsStr = preg_replace('/([\n ]*\<bpmn:group *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *id=\"'.$thisGroupID.'\" *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *\/?\>[\n ]*)/', '', $allGroupsStr);
+                continue;
             }
+            // Иначе, если НЕТ ни в одной из диаграмм - удаляем
+            else if (!preg_match('/bpmnElement\=\"'.$thisGroupID.'\"/', $spDiagramOutput.$innerSPDiagrams)){
+                $allGroupsStr = preg_replace('/([\n ]*\<bpmn:group *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *id=\"'.$thisGroupID.'\" *(?:[ \w\.\-]+\=\"[^\"]+\" *)* *\/?\>[\n ]*)/', '', $allGroupsStr);
+            }
+        }
 
-            unset($thisGroupID);
+        unset($thisGroupID);
 
 
 
@@ -656,8 +743,8 @@ else {
     <script src="js/jquery.js"></script>
     <link rel="stylesheet" href="css/bpmn-js.css">
     <link rel="stylesheet" href="css/jquery-ui.css">
-<!--    <link rel="stylesheet" href="/css/fontawesome/css/fontawesome.css"/>
-    <link rel="stylesheet" href="/css/fontawesome/css/solid.css"/> -->
+    <!--    <link rel="stylesheet" href="/css/fontawesome/css/fontawesome.css"/>
+        <link rel="stylesheet" href="/css/fontawesome/css/solid.css"/> -->
 
     <!-- viewer distro (with pan and zoom) -->
     <script src="js/bpmn-navigated-viewer.development.js"></script>
@@ -742,47 +829,47 @@ else {
 <div id="tooltip">TOOLTIP</div>
 <div id="bpmn-container">
 
-<?php
-if($_GET["pid"]) {
-    echo '<div id="BPMNBreadCrumbs"></div>';
-}
-?>
-<div id="canvas">
+    <?php
+    if($_GET["pid"]) {
+        echo '<div id="BPMNBreadCrumbs"></div>';
+    }
+    ?>
+    <div id="canvas">
 
-    <div id="loadingDiv"></div>
-</div>
+        <div id="loadingDiv"></div>
+    </div>
 </div>
 
 <script>
 
     <?php
-        echo 'var origUrl = window.location.href;';
-        echo 'var currentHref = origUrl.replace(/pid\=[\w\-\.]+$/, "");';
-        if($parrentLinksArr[0]) {
+    echo 'var origUrl = window.location.href;';
+    echo 'var currentHref = origUrl.replace(/pid\=[\w\-\.]+$/, "");';
+    if($parrentLinksArr[0]) {
 
-            $checker = 1;
-            foreach (array_reverse($parrentLinksArr) as &$thisParLink) {
-                if ($checker == 1) {
-                    echo '$("#BPMNBreadCrumbs").append("<a href=\"" + currentHref + "pid=' . $thisParLink . '\" class=\"bpmn-breadcrumbs\">' . $thisParLink . '</a>");';
-                    $checker = 2;
-                } else {
-                    echo '$("#BPMNBreadCrumbs").append("<span class=\"bpmn-breadcrumbs-cursor\">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</span><a href=\"" + currentHref + "pid=' . $thisParLink . '\" class=\"bpmn-breadcrumbs\">' . $thisParLink . '</a>");';
-                }
-            }
-            if ($checker == 2) {
-                echo '$("#BPMNBreadCrumbs").append("<span class=\"bpmn-breadcrumbs-cursor\">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</span><span class=\"bpmn-breadcrumbs-current-pid\">' . $_GET["pid"] . '</span>");';
+        $checker = 1;
+        foreach (array_reverse($parrentLinksArr) as &$thisParLink) {
+            if ($checker == 1) {
+                echo '$("#BPMNBreadCrumbs").append("<a href=\"" + currentHref + "pid=' . $thisParLink . '\" class=\"bpmn-breadcrumbs\">' . $thisParLink . '</a>");';
+                $checker = 2;
             } else {
-                echo '$("#BPMNBreadCrumbs").append("<span class=\"bpmn-breadcrumbs-current-pid\">' . $_GET["pid"] . '</span>");';
+                echo '$("#BPMNBreadCrumbs").append("<span class=\"bpmn-breadcrumbs-cursor\">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</span><a href=\"" + currentHref + "pid=' . $thisParLink . '\" class=\"bpmn-breadcrumbs\">' . $thisParLink . '</a>");';
             }
         }
-        if ($_GET["pid"] and $parrentLinksArr[0]) {
-            echo '$("#BPMNBreadCrumbs").prepend("<a href=\"" + currentHref + "pid=\" class=\"bpmn-breadcrumbs-home\">Общая схема</a><span class=\"bpmn-breadcrumbs-cursor\">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</span>");';
-        }
-        else if ($_GET["pid"]){
+        if ($checker == 2) {
             echo '$("#BPMNBreadCrumbs").append("<span class=\"bpmn-breadcrumbs-cursor\">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</span><span class=\"bpmn-breadcrumbs-current-pid\">' . $_GET["pid"] . '</span>");';
-            echo '$("#BPMNBreadCrumbs").prepend("<a href=\"" + currentHref + "pid=\" class=\"bpmn-breadcrumbs-home\">Общая схема</a>");';
+        } else {
+            echo '$("#BPMNBreadCrumbs").append("<span class=\"bpmn-breadcrumbs-current-pid\">' . $_GET["pid"] . '</span>");';
         }
-     ?>
+    }
+    if ($_GET["pid"] and $parrentLinksArr[0]) {
+        echo '$("#BPMNBreadCrumbs").prepend("<a href=\"" + currentHref + "pid=\" class=\"bpmn-breadcrumbs-home\">Общая схема</a><span class=\"bpmn-breadcrumbs-cursor\">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</span>");';
+    }
+    else if ($_GET["pid"]){
+        echo '$("#BPMNBreadCrumbs").append("<span class=\"bpmn-breadcrumbs-cursor\">&nbsp;&nbsp;&gt;&nbsp;&nbsp;</span><span class=\"bpmn-breadcrumbs-current-pid\">' . $_GET["pid"] . '</span>");';
+        echo '$("#BPMNBreadCrumbs").prepend("<a href=\"" + currentHref + "pid=\" class=\"bpmn-breadcrumbs-home\">Общая схема</a>");';
+    }
+    ?>
 
 
     // viewer instance

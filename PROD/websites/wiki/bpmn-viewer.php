@@ -29,7 +29,8 @@ else if (!preg_match('/[\w-]+\.bpmn$/', $_GET["mw-filename"])){
 $mw_filename = $_GET["mw-filename"];
 
 //$baseURL = 'http://139.59.191.178/index.php?File:';
-$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+// $protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? "https" : "http";
+$protocol = 'https';
 $hostname = $_SERVER['HTTP_HOST'];
 $baseURL = $protocol . "://" . $hostname . "/index.php/File:";
 $vcsBranchFromCookies = $_COOKIE['brnch'] ?? 'Master';
