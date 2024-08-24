@@ -203,9 +203,6 @@ class Renderer {
                         pdfOptions.format = format;
                     }
                     return page.evaluate(() => {
-                        // Заменяем текст "ССЫЛКА" на "ССЫЛКА1"
-                        // const iframe = document.querySelector('#bpmn_diagram');
-                        // return iframe ? iframe.innerHTML : null;  // Возвращаем содержимое iframe, если оно есть
                         const div = document.getElementById('bpmn_diagram');
                         const iframe = div ? div.querySelector('iframe') : null;
 
@@ -231,14 +228,20 @@ class Renderer {
                                 return Promise.resolve(null);
                             }
                             
-                            // Прокручиваем страницу вниз на 500 пикселей
-                            return page.evaluate(() => {
-                                window.scrollBy(0, 200);
-                            })
-                            
                             // Ждем 2 секунды после полной загрузки страницы
-                            .then(() => page.waitForTimeout(2000))
-                            .then(() => page.screenshot({ encoding: 'base64' })); // Делаем скриншот и возвращаем в base64
+                            return page.waitForTimeout(2000)
+                                .then(() => page.evaluate(() => {
+                                    // Скрываем хлебные крошки и логотип bpmn.io
+                                    const breadcrumbs = document.getElementById('BPMNBreadCrumbs');
+                                    if (breadcrumbs) {
+                                        breadcrumbs.innerHTML = '';
+                                    }
+                                    const poweredBy = document.getElementById('bjs-powered-by');
+                                    if (poweredBy) {
+                                        poweredBy.innerHTML = '';
+                                    }
+                                }))
+                                .then(() => page.screenshot({ encoding: 'base64', quality: 100, type: 'png' })); // Делаем скриншот и возвращаем в base64
                         })
                         .then((base64Screenshot) => {
                             if (base64Screenshot) {
