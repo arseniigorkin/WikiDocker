@@ -1,8 +1,0 @@
-{
-	"@metadata": {
-		"authors": [
-			"!Silent"
-		]
-	},
-	"ldapauthorization-desc": "Restringir o acesso baseado nos valores LDAP especificados"
-}

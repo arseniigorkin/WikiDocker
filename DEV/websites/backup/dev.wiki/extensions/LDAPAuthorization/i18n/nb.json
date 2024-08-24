@@ -1,8 +1,0 @@
-{
-	"@metadata": {
-		"authors": [
-			"Laaknor"
-		]
-	},
-	"ldapauthorization-desc": "Begrens innlogging basert på LDAP-verdier"
-}

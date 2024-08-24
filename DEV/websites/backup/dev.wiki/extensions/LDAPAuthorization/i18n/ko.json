@@ -1,8 +1,0 @@
-{
-	"@metadata": {
-		"authors": [
-			"Revi"
-		]
-	},
-	"ldapauthorization-desc": "LDAP 값을 기반으로 로그인 제한"
-}

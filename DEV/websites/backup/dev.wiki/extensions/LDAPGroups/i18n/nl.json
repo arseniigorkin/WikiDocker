@@ -1,8 +1,0 @@
-{
-	"@metadata": {
-		"authors": [
-			"McDutchie"
-		]
-	},
-	"ldapgroups-desc": "Hiermee kunt u gebruikersgroepen synchroniseren met een LDAP-bron"
-}

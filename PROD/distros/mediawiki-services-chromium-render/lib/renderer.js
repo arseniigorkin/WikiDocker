@@ -230,10 +230,15 @@ class Renderer {
                                 // Если скриншот не делаем, сразу переходим к рендеру PDF
                                 return Promise.resolve(null);
                             }
-
+                            
+                            // Прокручиваем страницу вниз на 500 пикселей
+                            return page.evaluate(() => {
+                                window.scrollBy(0, 200);
+                            })
+                            
                             // Ждем 2 секунды после полной загрузки страницы
-                            return page.waitForTimeout(2000)
-                                .then(() => page.screenshot({ encoding: 'base64' })); // Делаем скриншот и возвращаем в base64
+                            .then(() => page.waitForTimeout(2000))
+                            .then(() => page.screenshot({ encoding: 'base64' })); // Делаем скриншот и возвращаем в base64
                         })
                         .then((base64Screenshot) => {
                             if (base64Screenshot) {

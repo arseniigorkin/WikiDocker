@@ -1,6 +1,0 @@
-{
-	"@metadata": {
-		"authors": []
-	},
-	"ldapauthorization-desc": "Ograničava prijavu na osnovu određenih LDAP vrednosti"
-}

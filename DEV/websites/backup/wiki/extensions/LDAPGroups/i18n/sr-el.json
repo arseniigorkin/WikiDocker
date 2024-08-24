@@ -1,6 +1,0 @@
-{
-	"@metadata": {
-		"authors": []
-	},
-	"ldapgroups-desc": "Dozvoljava sinhronizaciju korisničke grupe sa LDAP resursom"
-}

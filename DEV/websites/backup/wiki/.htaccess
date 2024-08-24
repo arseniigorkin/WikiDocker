@@ -1,4 +1,0 @@
-#AuthUserFile /home/gpidru/web/wiki.gpid.ru/private/.htpwd
-#AuthType Basic
-#AuthName "Wiki Prod"
-#Require valid-user
