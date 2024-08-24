@@ -9,13 +9,13 @@ FROM ubuntu:24.04
 LABEL maintainer="Arsenii Gorkin <gorkin@protonmail.com>"
 
 # 2. Задаём аргументы
-ARG NODE_VERSION='18.20.4'
-ARG APACHE_WIKI_CONF='./apache2/wiki.conf'
-ARG APACHE_DEV_WIKI_CONF='./apache2/dev.wiki.conf'
-ARG STARTUP_SCRIPT='./scripts/startup.sh'
-ARG DISTROS='./distros'
-ARG WIKI_USER_NAME='wikiadmin'
-ARG WIKI_USER_PWD='wikiadmin+vh93-h2=C_'
+ARG NODE_VERSION=18.20.4
+ARG APACHE_WIKI_CONF=./apache2/wiki.conf
+ARG APACHE_DEV_WIKI_CONF=./apache2/dev.wiki.conf
+ARG STARTUP_SCRIPT=./scripts/startup.sh
+ARG DISTROS=./distros
+ARG WIKI_USER_NAME=wikiadmin
+ARG WIKI_USER_PWD=wikiadmin+vh93-h2=C_
 
 # 3. Устанавливаем необходимые пакеты
 RUN apt update && apt install -y \
