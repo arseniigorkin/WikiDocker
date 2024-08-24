@@ -57,6 +57,7 @@ function proton_start {
 
   # Повторный запуск сервиса, который будет работать постоянно
   echo 'Повторный запуск Proton сервиса...'
+  cd /var/www/distros/mediawiki-services-chromium-render &&
   node /var/www/distros/mediawiki-services-chromium-render/server.js
 }
 
