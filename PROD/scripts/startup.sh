@@ -30,34 +30,34 @@ function proton_start {
   echo 'Ожидаем полный старт 5 секунд...'
   sleep 5
   
-  # Получение реального PID процесса Node.js
-  node_pid=$(ps aux | grep 'node' | grep '/var/www/distros/mediawiki-services-chromium-render/server.js' | grep -v 'grep' | awk '{print $2}')
-  
-  # Проверка наличия PID
-  if [ -n "$node_pid" ]; then
-      echo "PID Proton сервиса: $node_pid"
-  else
-      echo "Не удалось получить PID процесса Node.js"
-      kill -SIGTERM "$npm_pid"  # Попытка завершить процесс npm, если не найден node_pid
-      exit 1  # Завершить скрипт с ошибкой, если PID не найден
-  fi
-  
-  # Ожидание сигнала для завершения
-  echo 'Остановка первого запуска сервиса Proton...'
-  kill -SIGTERM "$node_pid"  # Здесь нужно использовать $node_pid
-
-  # Проверка завершения процесса
-  sleep 2  # Дать время для завершения процесса
-  if kill -0 "$node_pid" 2>/dev/null; then  # Используйте $node_pid
-      echo "Процесс $node_pid не завершился корректно."
-      exit 1
-  else
-      echo "Процесс $node_pid успешно завершен."
-  fi
-  
-  # Повторный запуск сервиса, который будет работать постоянно
-  echo 'Повторный запуск Proton сервиса...'
-  npm start
+#  # Получение реального PID процесса Node.js
+#  node_pid=$(ps aux | grep 'node' | grep '/var/www/distros/mediawiki-services-chromium-render/server.js' | grep -v 'grep' | awk '{print $2}')
+#  
+#  # Проверка наличия PID
+#  if [ -n "$node_pid" ]; then
+#      echo "PID Proton сервиса: $node_pid"
+#  else
+#      echo "Не удалось получить PID процесса Node.js"
+#      kill -SIGTERM "$npm_pid"  # Попытка завершить процесс npm, если не найден node_pid
+#      exit 1  # Завершить скрипт с ошибкой, если PID не найден
+#  fi
+#  
+#  # Ожидание сигнала для завершения
+#  echo 'Остановка первого запуска сервиса Proton...'
+#  kill -SIGTERM "$node_pid"  # Здесь нужно использовать $node_pid
+#
+#  # Проверка завершения процесса
+#  sleep 2  # Дать время для завершения процесса
+#  if kill -0 "$node_pid" 2>/dev/null; then  # Используйте $node_pid
+#      echo "Процесс $node_pid не завершился корректно."
+#      exit 1
+#  else
+#      echo "Процесс $node_pid успешно завершен."
+#  fi
+#  
+#  # Повторный запуск сервиса, который будет работать постоянно
+#  echo 'Повторный запуск Proton сервиса...'
+#  npm start
 }
 
 
