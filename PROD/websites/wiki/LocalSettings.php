@@ -65,7 +65,7 @@ $wgDBtype = "mysql";
 $wgDBserver = "wiki.db";
 $wgDBname = "gpidru_wiki";
 $wgDBuser = "gpidru_wiki";
-$wgDBpassword = "B6#HA7N&bwNayB1";
+$wgDBpassword = "B6:.H0A7n&bwNayB1";
 
 # MySQL specific settings
 $wgDBprefix = "wiki";
