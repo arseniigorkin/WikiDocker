@@ -230,18 +230,18 @@ class Renderer {
                             
                             // Ждем 2 секунды после полной загрузки страницы
                             return page.waitForTimeout(2000)
-                                .then(() => page.evaluate(() => {
-                                    // Скрываем хлебные крошки и логотип bpmn.io
-                                    const breadcrumbs = document.getElementById('BPMNBreadCrumbs');
-                                    if (breadcrumbs) {
-                                        breadcrumbs.innerHTML = '';
-                                    }
-                                    const poweredBy = document.getElementById('bjs-powered-by');
-                                    if (poweredBy) {
-                                        poweredBy.innerHTML = '';
-                                    }
-                                }))
-                                .then(() => page.screenshot({ encoding: 'base64', quality: 100, type: 'png' })); // Делаем скриншот и возвращаем в base64
+                            .then(() => page.evaluate(() => {
+                                // Скрываем хлебные крошки и логотип bpmn.io
+                                const breadcrumbs = document.getElementById('BPMNBreadCrumbs');
+                                if (breadcrumbs) {
+                                    breadcrumbs.innerHTML = '';
+                                }
+                                const poweredBy = document.getElementById('bjs-powered-by');
+                                if (poweredBy) {
+                                    poweredBy.innerHTML = '';
+                                }
+                            }))
+                            .then(() => page.screenshot({ encoding: 'base64', quality: 100, type: 'png' })); // Делаем скриншот и возвращаем в base64
                         })
                         .then((base64Screenshot) => {
                             if (base64Screenshot) {
