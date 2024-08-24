@@ -91,7 +91,7 @@ COPY ${APACHE_WIKI_CONF} /etc/apache2/sites-available/wiki.conf
 COPY ${APACHE_DEV_WIKI_CONF} /etc/apache2/sites-available/dev.wiki.conf
 RUN ln -s /etc/apache2/sites-available/wiki.conf /etc/apache2/sites-enabled/wiki.conf && \
     ln -s /etc/apache2/sites-available/dev.wiki.conf /etc/apache2/sites-enabled/dev.wiki.conf && \
-    a2enmod proxy proxy_http rewrite headers && \
+    a2enmod proxy proxy_http rewrite && \
     a2ensite wiki.conf && \
     a2ensite dev.wiki.conf && \
     a2dissite 000-default.conf
