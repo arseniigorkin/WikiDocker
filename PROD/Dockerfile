@@ -44,7 +44,7 @@ RUN apt update && apt install -y \
 
 # 4. Настройка языка
 RUN locale-gen ru_RU.UTF-8 && \
-    update-locale LANG=ru_RU.UTF-8 \
+    update-locale LANG=ru_RU.UTF-8
 
 # 5. Создаем пользователя без sudo
 RUN useradd -m -s /bin/bash ${WIKI_USER_NAME} && \
