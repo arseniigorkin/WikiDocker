@@ -34,6 +34,7 @@ RUN apt update && apt install -y \
     php-mbstring \
     php-xml \
     php-intl \
+    locales \
     iputils-ping \
     mysql-client \
     imagemagick \
@@ -41,12 +42,16 @@ RUN apt update && apt install -y \
     python3-apt \
     php-curl
 
-# 4. Создаем пользователя без sudo
+# 4. Настройка языка
+RUN locale-gen ru_RU.UTF-8 && \
+    update-locale LANG=ru_RU.UTF-8 \
+
+# 5. Создаем пользователя без sudo
 RUN useradd -m -s /bin/bash ${WIKI_USER_NAME} && \
     echo "${WIKI_USER_NAME}:${WIKI_USER_PWD}" | chpasswd && \
     usermod -aG www-data ${WIKI_USER_NAME}
 
-# 5. Создание директорий для сайтов wiki
+# 6. Создание директорий для сайтов wiki
 RUN mkdir -p /var/www/wiki  \
     /var/www/dev.wiki  \
     /var/www/private.wiki  \
@@ -60,17 +65,17 @@ RUN mkdir -p /var/www/wiki  \
     chmod g+rxw -R /var/www && \
     chown -R www-data:www-data /var/www
 
-# 6. Устанавливаем Node.js 18 напрямую
+# 7. Устанавливаем Node.js 18 напрямую
 RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz | tar -xJf - -C /usr/local --strip-components=1 --no-same-owner && \
     ln -s /usr/local/bin/node /usr/bin/node && \
     ln -s /usr/local/bin/npm /usr/bin/npm
 
-# 7. Устанавливаем Chromium
+# 8. Устанавливаем Chromium
 RUN add-apt-repository ppa:xtradeb/apps -y && \
     apt-get update && \
     apt-get install -y chromium
 
-# 8. Настройка apache2
+# 9. Настройка apache2
 COPY ${APACHE_WIKI_CONF} /etc/apache2/sites-available/wiki.conf
 COPY ${APACHE_DEV_WIKI_CONF} /etc/apache2/sites-available/dev.wiki.conf
 RUN ln -s /etc/apache2/sites-available/wiki.conf /etc/apache2/sites-enabled/wiki.conf && \
@@ -83,7 +88,7 @@ RUN ln -s /etc/apache2/sites-available/wiki.conf /etc/apache2/sites-enabled/wiki
 # 10. Настройка порта apache2
 #RUN echo 'Listen 8080' >> /etc/apache2/ports.conf
 
-# 13. Устанавливаем зависимости и Python 3.10
+# 11. Устанавливаем зависимости и Python 3.10
 RUN apt-get update && apt-get install -y software-properties-common && \
     add-apt-repository -y ppa:deadsnakes/ppa && \
     apt-get update && \
@@ -91,23 +96,23 @@ RUN apt-get update && apt-get install -y software-properties-common && \
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.10 1 && \
     python3.10 -m ensurepip --upgrade
 
-# 14. Настройка модулей для Proton
+# 12. Настройка модулей для Proton
 COPY ${DISTROS} /var/www/distros
 RUN chmod g+rxw -R /var/www/distros
 RUN chown -R ${WIKI_USER_NAME} /var/www
 
-# 15. Очистка и завершение
+# 13. Очистка и завершение
 RUN apt clean && apt update && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/www/html
 
-# 16. Установка портов
+# 14. Установка портов
 EXPOSE 80 3030
 
-# 17. Копируем скрипт запуска процессов в контейнер
+# 15. Копируем скрипт запуска процессов в контейнер
 COPY ${STARTUP_SCRIPT} /startup.sh
 RUN chmod +x /startup.sh
 
-# 18. Запуск процессов
+# 16. Запуск процессов
 ENTRYPOINT ["/startup.sh"]
 CMD ["--dev"]

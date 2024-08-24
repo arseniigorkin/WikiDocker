@@ -43,6 +43,9 @@ services:
       - WIKI_SITE_PROTOCOL=${WIKI_SITE_PROTOCOL}
       - DEV_WIKI_SITE_URL=${DEV_WIKI_SITE_URL}
       - DEV_WIKI_SITE_PROTOCOL=${DEV_WIKI_SITE_PROTOCOL}
+      - LANG=ru_RU.UTF-8
+      - LANGUAGE=ru_RU:ru
+      - LC_ALL=ru_RU.UTF-8
     entrypoint: ["/startup.sh"]
     command: ["--prod"]
     volumes:
