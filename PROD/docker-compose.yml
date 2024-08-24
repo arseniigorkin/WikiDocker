@@ -49,11 +49,6 @@ services:
     entrypoint: ["/startup.sh"]
     command: ["--prod"]
     volumes:
-      - ${WIKI_BASE}:/var/www/wiki
-      - ${DEV_WIKI_BASE}:/var/www/dev.wiki
-      - ${PRIVATE_WIKI}:/var/www/private.wiki
-      - ${PRIVATE_DEV_WIKI}:/var/www/private.dev.wiki
-      - ${DISTROS}:/var/www/distros
       - ${USER_WIKI_UPLDS_DIR}:/var/www/wiki/uploads
       - ${USER_DEV_WIKI_UPLDS_DIR}:/var/www/dev.wiki/uploads
       - ${USER_WIKI_LOGS_DIR}:/var/www/wiki/logs

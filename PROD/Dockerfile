@@ -16,6 +16,10 @@ ARG STARTUP_SCRIPT=./scripts/startup.sh
 ARG DISTROS=./distros
 ARG WIKI_USER_NAME=wikiadmin
 ARG WIKI_USER_PWD=wikiadmin+vh93-h2=C_
+ARG WIKI_BASE=./websites/wiki
+ARG DEV_WIKI_BASE=./websites/dev.wiki
+ARG PRIVATE_WIKI=./websites/private.wiki
+ARG PRIVATE_DEV_WIKI=./websites/private.dev.wiki
 
 # 3. Устанавливаем необходимые пакеты
 RUN apt update && apt install -y \
@@ -51,7 +55,7 @@ RUN useradd -m -s /bin/bash ${WIKI_USER_NAME} && \
     echo "${WIKI_USER_NAME}:${WIKI_USER_PWD}" | chpasswd && \
     usermod -aG www-data ${WIKI_USER_NAME}
 
-# 6. Создание директорий для сайтов wiki
+# 6. Создание и заполнение директорий для сайтов wiki
 RUN mkdir -p /var/www/wiki  \
     /var/www/dev.wiki  \
     /var/www/private.wiki  \
@@ -62,8 +66,15 @@ RUN mkdir -p /var/www/wiki  \
     /var/www/dev.wiki/uploads \
     /var/www/wiki/logs \
     /var/www/dev.wiki/logs && \
-    chmod g+rxw -R /var/www && \
-    chown -R www-data:www-data /var/www
+    chown -R www-data:www-data /var/www && \
+    chmod g+srxw -R /var/www
+COPY ${DISTROS} /var/www/distros
+RUN chmod g+rxw -R /var/www/distros
+RUN chown -R ${WIKI_USER_NAME} /var/www
+COPY ${WIKI_BASE} /var/www/wiki
+COPY ${DEV_WIKI_BASE} /var/www/dev.wiki
+COPY ${PRIVATE_WIKI} /var/www/private.wiki
+COPY ${PRIVATE_DEV_WIKI} /var/www/private.dev.wiki
 
 # 7. Устанавливаем Node.js 18 напрямую
 RUN curl -fsSL https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz | tar -xJf - -C /usr/local --strip-components=1 --no-same-owner && \
@@ -97,11 +108,10 @@ RUN apt-get update && apt-get install -y software-properties-common && \
     python3.10 -m ensurepip --upgrade
 
 # 12. Настройка модулей для Proton
-COPY ${DISTROS} /var/www/distros
-RUN chmod g+rxw -R /var/www/distros
-RUN chown -R ${WIKI_USER_NAME} /var/www
+USER ${WIKI_USER_NAME}
 RUN cd /var/www/distros/mediawiki-services-chromium-render && \
     npm install
+USER root
 
 # 13. Очистка и завершение
 RUN apt clean && apt update && \
