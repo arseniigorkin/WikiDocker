@@ -52,10 +52,9 @@ RUN locale-gen ru_RU.UTF-8 && \
     update-locale LANG=ru_RU.UTF-8
 
 # 5. Создаем пользователя без sudo
-RUN id -u ${WIKI_USER_NAME} &>/dev/null || \
-    (useradd -m -s /bin/bash ${WIKI_USER_NAME} && \
+RUN useradd -m -s /bin/bash ${WIKI_USER_NAME} && \
     echo "${WIKI_USER_NAME}:${WIKI_USER_PWD}" | chpasswd && \
-    usermod -aG www-data ${WIKI_USER_NAME})
+    usermod -aG www-data ${WIKI_USER_NAME}
 
 # 6. Создание и заполнение директорий для сайтов wiki
 RUN mkdir -p /var/www/wiki  \
@@ -72,6 +71,7 @@ RUN mkdir -p /var/www/wiki  \
     chmod g+srxw -R /var/www
 COPY ${DISTROS} /var/www/distros
 RUN chmod g+rxw -R /var/www/distros
+RUN chown -R ${WIKI_USER_NAME} /var/www
 COPY ${WIKI_BASE} /var/www/wiki
 COPY ${DEV_WIKI_BASE} /var/www/dev.wiki
 COPY ${PRIVATE_WIKI} /var/www/private.wiki
