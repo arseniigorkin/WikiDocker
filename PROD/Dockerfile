@@ -43,6 +43,7 @@ RUN apt update && apt install -y \
     mysql-client \
     imagemagick \
     php-mysql \
+    php-ldap \
     python3-apt \
     php-curl
 
