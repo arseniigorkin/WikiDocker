@@ -241,7 +241,7 @@ class Renderer {
                                     poweredBy.innerHTML = '';
                                 }
                             }))
-                            .then(() => page.screenshot({ encoding: 'base64', quality: 100, type: 'png' })); // Делаем скриншот и возвращаем в base64
+                            .then(() => page.screenshot({ encoding: 'base64', type: 'png' })); // Делаем скриншот и возвращаем в base64
                         })
                         .then((base64Screenshot) => {
                             if (base64Screenshot) {
