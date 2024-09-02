@@ -71,7 +71,7 @@ RUN mkdir -p /var/www/wiki  \
     chmod g+srxw -R /var/www
 COPY ${DISTROS} /var/www/distros
 RUN chmod g+rxw -R /var/www/distros
-RUN chown -R ${WIKI_USER_NAME} /var/www
+RUN chown -R ${WIKI_USER_NAME} /var/www/distros
 COPY ${WIKI_BASE} /var/www/wiki
 COPY ${DEV_WIKI_BASE} /var/www/dev.wiki
 COPY ${PRIVATE_WIKI} /var/www/private.wiki
